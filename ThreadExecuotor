@@ -1,0 +1,51 @@
+package com.avg.thread;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class ThreadExecutor {
+
+	private static int count = 0;
+
+	public static void main(String[] args) {
+		ExecutorService service = Executors.newCachedThreadPool();
+		Utility utility=new Utility();
+		try {
+			List<Future<Integer>> futures = service.invokeAll(buildRequest(10));
+			for (Future<Integer> future : futures) {
+			//	System.out.println(future.get());
+				utility.printMessage(future.get());
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+	}
+	private static Set<Callable<Integer>> buildRequest(int requestCount){
+		
+		
+		Set<Callable<Integer>> callables = new HashSet<Callable<Integer>>();
+
+		for (int i = 0; i <=requestCount; i++) {
+			
+			callables.add(new Callable<Integer>() {
+				@Override
+				public Integer call() throws Exception {
+					
+					return count++;
+				}
+			});
+
+		}
+		
+	
+		return callables;
+	}
+}
